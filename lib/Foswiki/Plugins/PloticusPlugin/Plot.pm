@@ -26,8 +26,7 @@ sub new{
     return $self;    
 }
 
-
-sub render{
+sub renderForShow{
     my $self = shift;    
     Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Rendering $self->{NAME}" ) if $debug;
 
@@ -41,9 +40,73 @@ sub render{
         my $errFile = $self->{PATH} . "/" . $self->{ERRFILE};
 
         # Update $ploticusPath, $ploticusHelperPath and $execCmd to fit your environment
-        my $ploticusPath = "/usr/bin/ploticus";
-        my $ploticusHelperPath = "/home/httpd/twiki/tools/ploticus.pl";
+        my $ploticusPath = "/opt/local/bin/pl";
+        my $ploticusHelperPath = "/home/httpd/foswiki/tools/ploticus.pl";
         my $execCmd = "/usr/bin/perl %HELPERSCRIPT|F% %PLOTICUS|F% %WORKDIR|F% %INFILE|F% %FORMAT|S% %OUTFILE|F% %ERRFILE|F% ";
+        Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Ploticus path: $ploticusPath" ) if $debug;
+        Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Ploticus helper path: $ploticusHelperPath" ) if $debug;
+        Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Executing $execCmd in sandbox" ) if $debug;
+        Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - errorfile set to $errFile" ) if $debug;
+        my $sandbox = $Foswiki::sharedSandbox; 
+        my ($output, $status) = $sandbox->sysCommand($execCmd,
+                                                     HELPERSCRIPT => $ploticusHelperPath,
+                                                     PLOTICUS => $ploticusPath,
+                                                     WORKDIR => $self->{PATH},
+                                                     INFILE => $ploticusTmpFile,
+                                                     FORMAT => 'png',
+                                                     OUTFILE => $pngFile,
+                                                     ERRFILE => $errFile
+                                                    );
+        Foswiki::Func::writeDebug("ploticus-sandbox: output $output status $status") if $debug;
+        if (-s $pngFile)
+        {
+            $renderedText .= "%ATTACHURL%/$self->{PNGFILE}\n\n";
+        }
+        else
+        {
+            $renderedText .= "*PloticusPlugin Error:* Cannot display the plot because the image file ($self->{PNGFILE}) has zero size. With a bit of luck the reason for this will be shown below.\n---\n"
+        }
+        if(-s $errFile)
+        {
+            open (ERRFILE, $errFile);
+            my @errLines = <ERRFILE>;
+            for (@errLines)
+            {
+                if(/($self->{PATH})/)
+                {
+                    my $maskedPath = $1;
+                    $maskedPath =~ tr/[a-z][A-Z][0-9]\//\*/;
+                    s/$self->{PATH}/$maskedPath/g;
+                }
+            }
+            $renderedText .= "*Ploticus Error:* <verbatim>" . join("", @errLines) . "</verbatim>";
+        }
+    }
+    else
+    {
+        Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - $ploticusFile does not exist" ) if $debug;
+        $renderedText = "No settings found for this plot (<nop>$self->{PLOTICUSFILE} not found). \n";
+    }
+    return $renderedText;
+}
+
+sub renderForEdit{
+    my $self = shift;    
+    Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Rendering $self->{NAME}" ) if $debug;
+
+    my $renderedText = "<a name=\"ploticusplot" . $self->{NAME} . "\"></a>\n";
+    my $ploticusFile = $self->{PATH} . "/" . $self->{PLOTICUSFILE};
+    my $ploticusTmpFile = "/tmp/" . $self->{PLOTICUSFILE};
+    my $pngFile = $self->{PATH} . "/" . $self->{PNGFILE};
+    if (-e $ploticusFile) 
+    { 
+        parseFile($self, $ploticusFile, $ploticusTmpFile);
+        my $errFile = $self->{PATH} . "/" . $self->{ERRFILE};
+
+        # Update $ploticusPath, $ploticusHelperPath and $execCmd to fit your environment
+        my $ploticusPath = "/opt/local/bin/pl";
+        my $ploticusHelperPath = "/www/htdocs/tools/ploticus.pl";
+        my $execCmd = "/opt/coolstack/bin/perl %HELPERSCRIPT|F% %PLOTICUS|F% %WORKDIR|F% %INFILE|F% %FORMAT|S% %OUTFILE|F% %ERRFILE|F% ";
         Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Ploticus path: $ploticusPath" ) if $debug;
         Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Ploticus helper path: $ploticusHelperPath" ) if $debug;
         Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Executing $execCmd in sandbox" ) if $debug;

@@ -151,8 +151,8 @@ sub render{
     $text .= "    <td><textarea  rows=\"10\" cols=\"90\" name=\"ploticusPlotSettingsText\" >$self->{TEXT}</textarea>\n";
     $text .= "    </td>\n";
     $text .= "    <td><input  type=\"submit\" value=\"Save Settings\" class=\"foswikiSubmit\" /><br>\n";
-    $text .= "        <a target=\"PloticusPlugin\" onclick=\"return launchWindow('TWiki','PloticusPlugin')\" href=\"/twiki/bin/view/TWiki/PloticusPlugin\">PloticusPlugin help</a><br>\n";
-    $text .= "        <a target=\"PloticusHelp\" onclick=\"return launchWindow('TWiki','PloticusHelp')\" href=\"/twiki/bin/view/TWiki/PloticusHelp\">Ploticus help</a>\n";
+    $text .= "        <a target=\"PloticusPlugin\" onclick=\"return launchWindow('System','PloticusPlugin')\" href=\"/foswiki/bin/view/System/PloticusPlugin\">PloticusPlugin help</a><br>\n";
+    $text .= "        <a target=\"PloticusHelp\" onclick=\"return launchWindow('System','PloticusHelp')\" href=\"/foswiki/bin/view/System/PloticusHelp\">Ploticus help</a>\n";
     $text .= "    </td>\n";
     $text .= "  </tr>\n";
     $text .= "</table>\n";
