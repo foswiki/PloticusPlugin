@@ -1,7 +1,7 @@
 
-package TWiki::Plugins::PloticusPlugin::PlotSettings;
+package Foswiki::Plugins::PloticusPlugin::PlotSettings;
 
-require TWiki::Plugins::PloticusPlugin;
+require Foswiki::Plugins::PloticusPlugin;
 
 use strict;
 use Assert;
@@ -10,8 +10,8 @@ my $debug = 0;
 
 sub fromFile{
     my ($class, $web, $topic, $plotName) = @_;
-    $debug = $TWiki::Plugins::PloticusPlugin::debug;
-    TWiki::Func::writeDebug( "PloticusPlugin::PlotSettings::fromFile - Creating new PlotSettings Object from file for $web / $topic / $plotName" );
+    $debug = $Foswiki::Plugins::PloticusPlugin::debug;
+    Foswiki::Func::writeDebug( "PloticusPlugin::PlotSettings::fromFile - Creating new PlotSettings Object from file for $web / $topic / $plotName" );
     my $self = {};
     $self->{WEB}   = $web;
     $self->{TOPIC} = $topic;
@@ -28,11 +28,11 @@ sub fromFile{
 
 sub buildFileName{
     my ($web, $topic, $plotName) = @_;
-    return TWiki::Func::getPubDir() . "/$web/$topic/$plotName.ploticus";
+    return Foswiki::Func::getPubDir() . "/$web/$topic/$plotName.ploticus";
 }
 sub readFile {
     my $ploticusFile = $_[0];
-    TWiki::Func::writeDebug( "PloticusPlugin::PlotSettings::readFile - Reading settings from $ploticusFile" ) if $debug;
+    Foswiki::Func::writeDebug( "PloticusPlugin::PlotSettings::readFile - Reading settings from $ploticusFile" ) if $debug;
     open (INFILE, $ploticusFile) or return newFile();
     my $content = '';
     while (<INFILE>)
@@ -68,13 +68,13 @@ sub readFile {
 
 sub writeFile{
     my ($web, $topic, $plotName, $text) = @_;
-    my $webDir = TWiki::Func::getPubDir() . "/$web";
+    my $webDir = Foswiki::Func::getPubDir() . "/$web";
     unless (-e $webDir) { mkdir $webDir };
     unless (-e "$webDir/$topic") { mkdir "$webDir/$topic" };
     my $ploticusFile =  "$webDir/$topic/$plotName.ploticus";
-    TWiki::Func::writeDebug( "PloticusPlugin::PlotSettings::writeFile - Writing ---=$text=--- to $ploticusFile" );# if $debug;
+    Foswiki::Func::writeDebug( "PloticusPlugin::PlotSettings::writeFile - Writing ---=$text=--- to $ploticusFile" );# if $debug;
     open (OUTFILE, ">", $ploticusFile) or die "Cannot create new Ploticusplot file!";
-    TWiki::Func::writeDebug( "PloticusPlugin::PlotSettings::writeFile - Writing ---=$text=--- to $ploticusFile" );# if $debug;
+    Foswiki::Func::writeDebug( "PloticusPlugin::PlotSettings::writeFile - Writing ---=$text=--- to $ploticusFile" );# if $debug;
     $text  =~s/<p \/>//g;
     if ( $text =~ /#shell|#endshell|\$shellrow|#sql|#load|#write|#endwrite|#cat/ ) {
         $text = "#proc annotate\n";
@@ -100,7 +100,7 @@ sub writeFile{
 }
 
 sub newFile{
-    TWiki::Func::writeDebug( "PloticusPlugin::PlotSettings::newFile - Creating new default settings" ) if $debug;
+    Foswiki::Func::writeDebug( "PloticusPlugin::PlotSettings::newFile - Creating new default settings" ) if $debug;
     my $text = '';
     $text .= "// simple vertical bars example - replace this with your own plot\n";
     $text .= "\n";
@@ -145,12 +145,12 @@ sub render{
     my $text = '';
     $text .= "*Edit Settings for !$self->{NAME}*\n";
     $text .= "<a name=\"ploticusplot" . $self->{NAME} . "\"></a>\n";
-    $text .= "<form action=" . TWiki::Func::getScriptUrl( "$self->{WEB}", "$self->{TOPIC}", "view" ) . "\#ploticusplot$self->{NAME}\" method=\"post\">\n";
+    $text .= "<form action=" . Foswiki::Func::getScriptUrl( "$self->{WEB}", "$self->{TOPIC}", "view" ) . "\#ploticusplot$self->{NAME}\" method=\"post\">\n";
     $text .= "<table>\n";
     $text .= "  <tr valign=\"middle\">\n";
     $text .= "    <td><textarea  rows=\"10\" cols=\"90\" name=\"ploticusPlotSettingsText\" >$self->{TEXT}</textarea>\n";
     $text .= "    </td>\n";
-    $text .= "    <td><input  type=\"submit\" value=\"Save Settings\" class=\"twikiSubmit\" /><br>\n";
+    $text .= "    <td><input  type=\"submit\" value=\"Save Settings\" class=\"foswikiSubmit\" /><br>\n";
     $text .= "        <a target=\"PloticusPlugin\" onclick=\"return launchWindow('TWiki','PloticusPlugin')\" href=\"/twiki/bin/view/TWiki/PloticusPlugin\">PloticusPlugin help</a><br>\n";
     $text .= "        <a target=\"PloticusHelp\" onclick=\"return launchWindow('TWiki','PloticusHelp')\" href=\"/twiki/bin/view/TWiki/PloticusHelp\">Ploticus help</a>\n";
     $text .= "    </td>\n";

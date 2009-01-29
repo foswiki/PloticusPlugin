@@ -1,7 +1,7 @@
 
-package TWiki::Plugins::PloticusPlugin::Plot;
+package Foswiki::Plugins::PloticusPlugin::Plot;
 
-require TWiki::Plugins::PloticusPlugin::PlotSettings;
+require Foswiki::Plugins::PloticusPlugin::PlotSettings;
 
 use strict;
 use Assert;
@@ -10,13 +10,13 @@ my $debug = 0;
 
 sub new{
     my ($class, $web, $topic, $plotName) = @_;
-    $debug = $TWiki::Plugins::PloticusPlugin::debug;
-    TWiki::Func::writeDebug( "PloticusPlugin::Plot::new - Creating new Plot with name $plotName" ) if $debug;
+    $debug = $Foswiki::Plugins::PloticusPlugin::debug;
+    Foswiki::Func::writeDebug( "PloticusPlugin::Plot::new - Creating new Plot with name $plotName" ) if $debug;
     my $self = {};
     $self->{WEB}   = $web;
     $self->{TOPIC} = $topic;
     $self->{NAME}  = $plotName;
-    $self->{PATH}  = TWiki::Func::getPubDir() . "/$web/$topic";
+    $self->{PATH}  = Foswiki::Func::getPubDir() . "/$web/$topic";
     $self->{PLOTICUSFILE} = "$plotName.ploticus";
     $self->{PNGFILE} = "$plotName.png";
     $self->{ERRFILE} = "$plotName.err";
@@ -29,7 +29,7 @@ sub new{
 
 sub render{
     my $self = shift;    
-    TWiki::Func::writeDebug( "PloticusPlugin::Plot::render - Rendering $self->{NAME}" ) if $debug;
+    Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Rendering $self->{NAME}" ) if $debug;
 
     my $renderedText = "<a name=\"ploticusplot" . $self->{NAME} . "\"></a>\n";
     my $ploticusFile = $self->{PATH} . "/" . $self->{PLOTICUSFILE};
@@ -44,11 +44,11 @@ sub render{
         my $ploticusPath = "/usr/bin/ploticus";
         my $ploticusHelperPath = "/home/httpd/twiki/tools/ploticus.pl";
         my $execCmd = "/usr/bin/perl %HELPERSCRIPT|F% %PLOTICUS|F% %WORKDIR|F% %INFILE|F% %FORMAT|S% %OUTFILE|F% %ERRFILE|F% ";
-        TWiki::Func::writeDebug( "PloticusPlugin::Plot::render - Ploticus path: $ploticusPath" ) if $debug;
-        TWiki::Func::writeDebug( "PloticusPlugin::Plot::render - Ploticus helper path: $ploticusHelperPath" ) if $debug;
-        TWiki::Func::writeDebug( "PloticusPlugin::Plot::render - Executing $execCmd in sandbox" ) if $debug;
-        TWiki::Func::writeDebug( "PloticusPlugin::Plot::render - errorfile set to $errFile" ) if $debug;
-        my $sandbox = $TWiki::sharedSandbox; 
+        Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Ploticus path: $ploticusPath" ) if $debug;
+        Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Ploticus helper path: $ploticusHelperPath" ) if $debug;
+        Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - Executing $execCmd in sandbox" ) if $debug;
+        Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - errorfile set to $errFile" ) if $debug;
+        my $sandbox = $Foswiki::sharedSandbox; 
         my ($output, $status) = $sandbox->sysCommand($execCmd,
                                                      HELPERSCRIPT => $ploticusHelperPath,
                                                      PLOTICUS => $ploticusPath,
@@ -58,7 +58,7 @@ sub render{
                                                      OUTFILE => $pngFile,
                                                      ERRFILE => $errFile
                                                     );
-        TWiki::Func::writeDebug("ploticus-sandbox: output $output status $status") if $debug;
+        Foswiki::Func::writeDebug("ploticus-sandbox: output $output status $status") if $debug;
         if (-s $pngFile)
         {
             $renderedText .= "%ATTACHURL%/$self->{PNGFILE}\n\n";
@@ -86,7 +86,7 @@ sub render{
     }
     else
     {
-        TWiki::Func::writeDebug( "PloticusPlugin::Plot::render - $ploticusFile does not exist" ) if $debug;
+        Foswiki::Func::writeDebug( "PloticusPlugin::Plot::render - $ploticusFile does not exist" ) if $debug;
         $renderedText = "No settings found for this plot (<nop>$self->{PLOTICUSFILE} not found). Click on the Edit button below to generate and edit the settings for this plot.\n";
         $renderedText .= "\n" . editPlotSettingsButton($self);
     }
@@ -95,7 +95,7 @@ sub render{
 
 sub parseFile {
     my ($self, $ploticusFile, $ploticusTmpFile) = @_;
-    TWiki::Func::writeDebug( "PloticusPlugin::Plot::readFile - Reading settings from $ploticusFile" ) if $debug;
+    Foswiki::Func::writeDebug( "PloticusPlugin::Plot::readFile - Reading settings from $ploticusFile" ) if $debug;
     open (INFILE, $ploticusFile) or return newFile();
     open (OUTFILE, ">", $ploticusTmpFile) or die;
     while (<INFILE>) {
@@ -112,10 +112,10 @@ sub parseFile {
 sub editPlotSettingsButton {
     my $self = shift;
     my $text = '';
-    $text .= "<form action='" . TWiki::Func::getScriptUrl( "$self->{WEB}", "$self->{TOPIC}", "view" ) . "#ploticusplot".$self->{NAME}."' method=\"post\" >\n";
+    $text .= "<form action='" . Foswiki::Func::getScriptUrl( "$self->{WEB}", "$self->{TOPIC}", "view" ) . "#ploticusplot".$self->{NAME}."' method=\"post\" >\n";
     $text .= "<input type=\"hidden\" name=\"ploticusPlotName\" value=\"$self->{NAME}\" />\n";
     $text .= "<input type=\"hidden\" name=\"ploticusPlotAction\" value=\"edit\" />\n";
-    $text .= "<input type=\"submit\" value=\"Edit Plot Settings\" class=\"twikiSubmit\"></input>\n";
+    $text .= "<input type=\"submit\" value=\"Edit Plot Settings\" class=\"foswikiSubmit\"></input>\n";
     $text .= "</form>\n";
     return $text;
 }

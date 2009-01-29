@@ -1312,13 +1312,13 @@ __Note:__ You do not need to install anything on the browser to use this plugin.
 	* Unzip ==%TOPIC%.zip== in your twiki installation directory. <br />
 	   Content:
 	   | *File:* | *Description:* |
-	   | =data/TWiki/PloticusPlugin.txt= | Plugin topic |
-	   | =data/TWiki/PloticusPlugin.txt,v= | Plugin topic repository |
-	   | =lib/TWiki/Plugins/PloticusPlugin.pm= | Plugin Perl module |
-	   | =lib/TWiki/Plugins/PloticusPlugin/Plot.pm= | Perl module responsible for rendering the plot area |
-	   | =lib/TWiki/Plugins/PloticusPlugin/PlotSettings.pm= | Perl module responsible for managing the settings |
+	   | =data/System/PloticusPlugin.txt= | Plugin topic |
+	   | =data/System/PloticusPlugin.txt,v= | Plugin topic repository |
+	   | =lib/Foswiki/Plugins/PloticusPlugin.pm= | Plugin Perl module |
+	   | =lib/Foswiki/Plugins/PloticusPlugin/Plot.pm= | Perl module responsible for rendering the plot area |
+	   | =lib/Foswiki/Plugins/PloticusPlugin/PlotSettings.pm= | Perl module responsible for managing the settings |
 
-	* In =/lib/TWiki/Plugins/PloticusPlugin/Plot.pm= look for the following line and update the paths to fit your environment: %BR%
+	* In =/lib/Foswiki/Plugins/PloticusPlugin/Plot.pm= look for the following line and update the paths to fit your environment: %BR%
 	   =# Update $ploticusPath, $ploticusHelperPath and $execCmd to fit your environment= %BR%
 
 	* If your plugin is now correctly installed you should have fully interactive editable plots in the examples section
@@ -1330,7 +1330,7 @@ __Note:__ You do not need to install anything on the browser to use this plugin.
 | Change History: ||
 | 29 Apr 2006: | (v1.100) - Added sandbox security mechanism |
 | 27 Apr 2006: | (v1.000) - Initial version |
-| TWiki Dependency: | $TWiki::Plugins::VERSION 1.1 |
+| Dependency: | $Foswiki::Plugins::VERSION 1.1 |
 | CPAN Dependencies: | none |
 | Other Dependencies: | Ploticus (available from http://ploticus.sourceforge.net/) |
 | Perl Version: | 5.005 |
